@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Job Search Agent</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0B0F17;
+            --card: #1E293B;
+            --line: #334155;
+            --line-strong: #64748B;
+            --text: #F8FAFC;
+            --muted: #94A3B8;
+            --brand: #60A5FA;
+            --btn: #2563EB;
+            --on-btn: #fff;
+            --ai: #A78BFA;
+            --ok: #4ADE80;
+            --warn: #FBBF24;
+            --bad: #F87171;
+            --hover: rgba(148, 163, 184, .08);
+            color-scheme: dark
+        }
+
+        [data-theme="light"] {
+            --bg: #F8FAFC;
+            --card: #FFFFFF;
+            --line: #E2E8F0;
+            --line-strong: #64748B;
+            --text: #0F172A;
+            --muted: #475569;
+            --brand: #2563EB;
+            --btn: #2563EB;
+            --ai: #7C3AED;
+            --ok: #15803D;
+            --warn: #B45309;
+            --bad: #B91C1C;
+            --hover: rgba(15, 23, 42, .04);
+            color-scheme: light
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font: 400 16px/1.55 "Schibsted Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif
+        }
+
+        h1,
+        h2,
+        h3,
+        p {
+            margin: 0
+        }
+
+        button,
+        input,
+        select {
+            font: inherit;
+            color: inherit
+        }
+
+        :focus-visible {
+            outline: 2px solid var(--brand);
+            outline-offset: 2px
+        }
+
+        [hidden] {
+            display: none !important
+        }
+
+        .sr {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            clip: rect(0 0 0 0);
+            white-space: nowrap
+        }
+
+        .ic {
+            width: 1.1em;
+            height: 1.1em;
+            flex: none;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            vertical-align: -.15em
+        }
+
+        .wrap {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 0 20px
+        }
+
+        header.top {
+            border-bottom: 1px solid var(--line)
+        }
+
+        header.top .wrap {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px
+        }
+
+        .brand {
+            font-weight: 700;
+            letter-spacing: -.01em;
+            display: flex;
+            gap: 10px;
+            align-items: center
+        }
+
+        .brand .ic {
+            color: var(--brand);
+            width: 1.35em;
+            height: 1.35em
+        }
+
+        .iconbtn {
+            background: none;
+            border: 1px solid var(--line-strong);
+            border-radius: 8px;
+            width: 38px;
+            height: 38px;
+            display: grid;
+            place-items: center;
+            cursor: pointer
+        }
+
+        .iconbtn:hover {
+            background: var(--hover)
+        }
+
+        main {
+            padding: 40px 0 72px
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border-radius: 8px;
+            padding: 10px 18px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid transparent;
+            text-decoration: none
+        }
+
+        .btn.primary {
+            background: var(--btn);
+            color: var(--on-btn)
+        }
+
+        .btn.primary:hover {
+            filter: brightness(1.1)
+        }
+
+        .btn.ghost {
+            background: none;
+            border-color: var(--line-strong);
+            color: var(--text)
+        }
+
+        .btn.ghost:hover {
+            background: var(--hover)
+        }
+
+        .muted {
+            color: var(--muted)
+        }
+
+        /* setup */
+        .setup {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px;
+            align-items: start
+        }
+
+        @media(min-width:900px) {
+            .setup {
+                grid-template-columns: 5fr 6fr;
+                gap: 72px;
+                padding-top: 24px
+            }
+        }
+
+        h1 {
+            font-size: clamp(2rem, 4.2vw, 2.9rem);
+            line-height: 1.08;
+            letter-spacing: -.03em;
+            font-weight: 700;
+            max-width: 14ch
+        }
+
+        .intro p {
+            margin-top: 18px;
+            max-width: 46ch;
+            color: var(--muted);
+            font-size: 1.05rem
+        }
+
+        .facts {
+            margin: 28px 0 0;
+            padding: 0;
+            list-style: none;
+            display: grid;
+            gap: 14px;
+            max-width: 46ch
+        }
+
+        .facts li {
+            display: flex;
+            gap: 12px
+        }
+
+        .facts .ic {
+            margin-top: .25em;
+            color: var(--ai)
+        }
+
+        .panel {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 26px
+        }
+
+        fieldset {
+            border: 0;
+            padding: 0;
+            margin: 0 0 22px
+        }
+
+        legend {
+            font-weight: 600;
+            margin-bottom: 8px;
+            padding: 0
+        }
+
+        .seg {
+            display: inline-flex;
+            border: 1px solid var(--line-strong);
+            border-radius: 9px;
+            padding: 3px;
+            gap: 2px;
+            flex-wrap: wrap
+        }
+
+        .seg label {
+            position: relative
+        }
+
+        .seg input {
+            position: absolute;
+            opacity: 0;
+            inset: 0;
+            cursor: pointer
+        }
+
+        .seg span {
+            display: block;
+            padding: 7px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--muted)
+        }
+
+        .seg input:checked+span {
+            background: var(--btn);
+            color: var(--on-btn);
+            font-weight: 600
+        }
+
+        .seg input:focus-visible+span {
+            outline: 2px solid var(--brand);
+            outline-offset: 2px
+        }
+
+        .field input[type=text] {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--line-strong);
+            border-radius: 8px;
+            padding: 11px 12px
+        }
+
+        .drop {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            text-align: center;
+            padding: 26px 16px;
+            border: 1.5px dashed var(--line-strong);
+            border-radius: 10px;
+            cursor: pointer;
+            position: relative
+        }
+
+        .drop input {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer
+        }
+
+        .drop.over,
+        .drop:focus-within {
+            border-color: var(--brand);
+            background: color-mix(in srgb, var(--brand) 8%, transparent)
+        }
+
+        .drop .ic {
+            width: 1.6em;
+            height: 1.6em;
+            color: var(--brand)
+        }
+
+        .err {
+            color: var(--bad);
+            margin-top: 8px;
+            font-weight: 500
+        }
+
+        .privacy {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+            color: var(--muted);
+            font-size: .9rem
+        }
+
+        /* progress */
+        .progress {
+            max-width: 640px
+        }
+
+        .progress h2,
+        .results h2 {
+            font-size: 1.6rem;
+            letter-spacing: -.02em;
+            line-height: 1.2
+        }
+
+        .stages {
+            list-style: none;
+            margin: 28px 0;
+            padding: 0;
+            display: grid;
+            gap: 0
+        }
+
+        .stages li {
+            display: grid;
+            grid-template-columns: 28px 1fr;
+            gap: 14px;
+            padding: 14px 0;
+            border-top: 1px solid var(--line)
+        }
+
+        .stages li:last-child {
+            border-bottom: 1px solid var(--line)
+        }
+
+        .dot {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 2px solid var(--line-strong);
+            display: grid;
+            place-items: center;
+            margin-top: 2px
+        }
+
+        .stages .done .dot {
+            border-color: var(--ok);
+            color: var(--ok)
+        }
+
+        .stages .active .dot {
+            border-color: var(--ai);
+            position: relative
+        }
+
+        .stages .active .dot::after {
+            content: "";
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--ai);
+            animation: pulse 1.2s ease-in-out infinite
+        }
+
+        @keyframes pulse {
+            50% {
+                transform: scale(1.5);
+                opacity: .5
+            }
+        }
+
+        .stages .pending {
+            color: var(--muted)
+        }
+
+        .stages .name {
+            font-weight: 600
+        }
+
+        .stages .active .name {
+            color: var(--ai)
+        }
+
+        .stages .note {
+            display: block;
+            color: var(--muted);
+            font-size: .93rem
+        }
+
+        .guard {
+            display: flex;
+            gap: 10px;
+            color: var(--muted);
+            font-size: .93rem;
+            margin-bottom: 22px
+        }
+
+        .guard .ic {
+            color: var(--ai)
+        }
+
+        /* results */
+        .rhead {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: space-between;
+            align-items: flex-start
+        }
+
+        .rhead .acts {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap
+        }
+
+        .stats {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 26px 0 6px;
+            border-block: 1px solid var(--line)
+        }
+
+        .stats div {
+            padding: 16px 28px 16px 0;
+            margin-right: 28px
+        }
+
+        .stats dt {
+            color: var(--muted);
+            font-size: .9rem
+        }
+
+        .stats dd {
+            margin: 0;
+            font-size: 1.9rem;
+            font-weight: 700;
+            letter-spacing: -.02em;
+            font-variant-numeric: tabular-nums
+        }
+
+        .stats small {
+            font-size: .9rem;
+            font-weight: 400;
+            color: var(--muted);
+            letter-spacing: 0
+        }
+
+        .profile {
+            margin: 14px 0 22px;
+            color: var(--muted)
+        }
+
+        .chip {
+            display: inline-block;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            padding: 2px 11px;
+            margin: 3px 6px 3px 0;
+            font-size: .9rem;
+            color: var(--text)
+        }
+
+        .note-sample {
+            border: 1px solid var(--line);
+            border-left: 3px solid var(--ai);
+            padding: 10px 14px;
+            border-radius: 6px;
+            margin-bottom: 18px;
+            color: var(--muted);
+            font-size: .93rem
+        }
+
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            align-items: end;
+            margin-bottom: 14px
+        }
+
+        .filters label {
+            display: grid;
+            gap: 4px;
+            font-size: .9rem;
+            color: var(--muted)
+        }
+
+        .filters select,
+        .filters input {
+            background: var(--bg);
+            border: 1px solid var(--line-strong);
+            border-radius: 8px;
+            padding: 8px 10px;
+            min-width: 170px;
+            color: var(--text)
+        }
+
+        .count {
+            margin-left: auto;
+            color: var(--muted)
+        }
+
+        .tablewrap {
+            overflow-x: auto;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: var(--card)
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1060px
+        }
+
+        th {
+            text-align: left;
+            font-weight: 600;
+            color: var(--muted);
+            font-size: .9rem;
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--line)
+        }
+
+        td {
+            padding: 13px 14px;
+            border-bottom: 1px solid var(--line);
+            vertical-align: middle
+        }
+
+        tr:last-child td {
+            border-bottom: 0
+        }
+
+        tbody tr:hover {
+            background: var(--hover)
+        }
+
+        .rowbtn {
+            all: unset;
+            cursor: pointer;
+            display: block
+        }
+
+        .rowbtn:focus-visible {
+            outline: 2px solid var(--brand);
+            outline-offset: 3px;
+            border-radius: 4px
+        }
+
+        .jt {
+            font-weight: 600
+        }
+
+        .jt:hover {
+            text-decoration: underline
+        }
+
+        .sub {
+            color: var(--muted);
+            font-size: .92rem
+        }
+
+        .match {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 150px
+        }
+
+        .match b {
+            font-variant-numeric: tabular-nums;
+            min-width: 2ch
+        }
+
+        .bar {
+            flex: 1;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--line);
+            overflow: hidden;
+            min-width: 44px
+        }
+
+        .bar i {
+            display: block;
+            height: 100%;
+            background: var(--brand)
+        }
+
+        .bar.p i {
+            opacity: .6
+        }
+
+        .bar.w i {
+            opacity: .35
+        }
+
+        .lvl {
+            font-size: .88rem;
+            color: var(--muted);
+            min-width: 5.4em
+        }
+
+        .badge {
+            display: inline-flex;
+            gap: 6px;
+            align-items: center;
+            border-radius: 999px;
+            padding: 3px 10px;
+            font-size: .9rem;
+            font-weight: 600;
+            white-space: nowrap;
+            background: color-mix(in srgb, currentColor 13%, transparent)
+        }
+
+        .badge.ok {
+            color: var(--ok)
+        }
+
+        .badge.warn {
+            color: var(--warn)
+        }
+
+        .badge.bad {
+            color: var(--bad)
+        }
+
+        .empty {
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--muted)
+        }
+
+        @media(max-width:760px) {
+            .hide-sm {
+                display: none
+            }
+        }
+
+        .notice {
+            border: 1px solid var(--line);
+            border-left: 3px solid var(--warn);
+            padding: 10px 14px;
+            border-radius: 6px;
+            margin-bottom: 18px
+        }
+
+        .notice ul {
+            margin: 6px 0 0;
+            padding-left: 18px;
+            color: var(--muted);
+            font-size: .93rem
+        }
+
+        .clamp {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            max-width: 48ch
+        }
+
+        .rank {
+            font-variant-numeric: tabular-nums;
+            width: 3ch
+        }
+
+        details.more {
+            margin-top: 22px;
+            border-top: 1px solid var(--line);
+            padding-top: 12px
+        }
+
+        details.more summary {
+            cursor: pointer;
+            font-weight: 600;
+            padding: 6px 0
+        }
+
+        details.more ul {
+            list-style: none;
+            margin: 10px 0 0;
+            padding: 0;
+            display: grid;
+            gap: 14px
+        }
+
+        details.more li {
+            display: grid;
+            gap: 2px
+        }
+
+        .kv {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 4px 18px;
+            margin: 14px 0 0;
+            font-size: .95rem
+        }
+
+        .kv dt {
+            color: var(--muted)
+        }
+
+        .kv dd {
+            margin: 0;
+            overflow-wrap: anywhere
+        }
+
+        .rd {
+            display: grid;
+            gap: 26px;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            margin-top: 10px
+        }
+
+        .rd h3 {
+            font-size: 1rem;
+            margin: 0 0 4px
+        }
+
+        .rd table {
+            min-width: 0;
+            font-size: .93rem
+        }
+
+        .rd th,
+        .rd td {
+            padding: 6px 14px 6px 0;
+            border: 0
+        }
+
+        .rhead+.sub {
+            margin: -8px 0 0
+        }
+
+        /* drawer */
+        .veil {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .5);
+            z-index: 20
+        }
+
+        .drawer {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: min(540px, 100%);
+            background: var(--card);
+            border-left: 1px solid var(--line);
+            z-index: 21;
+            overflow: auto;
+            padding: 26px;
+            transform: translateX(100%);
+            transition: transform .22s ease
+        }
+
+        .drawer.open {
+            transform: none
+        }
+
+        .drawer h2 {
+            font-size: 1.4rem;
+            letter-spacing: -.02em;
+            line-height: 1.25;
+            margin: 0 36px 4px 0
+        }
+
+        .drawer .x {
+            position: absolute;
+            top: 18px;
+            right: 18px
+        }
+
+        .drawer section {
+            margin-top: 22px
+        }
+
+        .drawer h3 {
+            font-size: 1rem;
+            margin-bottom: 6px;
+            display: flex;
+            gap: 8px;
+            align-items: center
+        }
+
+        .drawer .ai h3 {
+            color: var(--ai)
+        }
+
+        .drawer .tr h3 {
+            color: var(--ok)
+        }
+
+        .drawer .desc {
+            color: var(--muted);
+            max-width: 62ch
+        }
+
+        .drawer .go {
+            margin-top: 26px
+        }
+
+        @media(prefers-reduced-motion:reduce) {
+            * {
+                animation: none !important;
+                transition: none !important
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+        <symbol id="i-logo" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="7" />
+            <path d="m20 20-4-4" />
+            <path d="M8.5 11.5l2 2 3.5-4" />
+        </symbol>
+        <symbol id="i-sun" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="4" />
+            <path
+                d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
+        </symbol>
+        <symbol id="i-moon" viewBox="0 0 24 24">
+            <path d="M21 13a9 9 0 1 1-10-10 7 7 0 0 0 10 10z" />
+        </symbol>
+        <symbol id="i-shield" viewBox="0 0 24 24">
+            <path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z" />
+            <path d="m9 12 2 2 4-4" />
+        </symbol>
+        <symbol id="i-tri" viewBox="0 0 24 24">
+            <path d="M12 3 2 20h20z" />
+            <path d="M12 10v5M12 18h.01" />
+        </symbol>
+        <symbol id="i-oct" viewBox="0 0 24 24">
+            <path d="M8 2h8l6 6v8l-6 6H8l-6-6V8z" />
+            <path d="M9 9l6 6M15 9l-6 6" />
+        </symbol>
+        <symbol id="i-lock" viewBox="0 0 24 24">
+            <rect x="4" y="11" width="16" height="10" rx="2" />
+            <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+        </symbol>
+        <symbol id="i-ext" viewBox="0 0 24 24">
+            <path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" />
+        </symbol>
+        <symbol id="i-check" viewBox="0 0 24 24">
+            <path d="m5 12 5 5 9-10" />
+        </symbol>
+        <symbol id="i-x" viewBox="0 0 24 24">
+            <path d="M6 6l12 12M18 6 6 18" />
+        </symbol>
+        <symbol id="i-up" viewBox="0 0 24 24">
+            <path d="M12 16V4M7 9l5-5 5 5M5 20h14" />
+        </symbol>
+        <symbol id="i-sheet" viewBox="0 0 24 24">
+            <rect x="4" y="3" width="16" height="18" rx="2" />
+            <path d="M4 9h16M4 15h16M10 3v18" />
+        </symbol>
+    </svg>
+
+    <header class="top">
+        <div class="wrap">
+            <div class="brand"><svg class="ic">
+                    <use href="#i-logo" />
+                </svg>Job Search Agent</div>
+            <button class="iconbtn" id="theme" aria-label="Switch to light theme"><svg class="ic">
+                    <use href="#i-sun" />
+                </svg></button>
+        </div>
+    </header>
+
+    <main class="wrap">
+        <!-- 1. setup -->
+        <section id="v-setup" class="setup">
+            <div class="intro">
+                <h1>Find jobs that fit you</h1>
+                <p>Upload your CV or type a role. The agent searches several job boards, removes suspicious posts and
+                    ranks what is left by how well it fits you.</p>
+                <ul class="facts">
+                    <li><svg class="ic">
+                            <use href="#i-shield" />
+                        </svg><span>Every job gets a trust score, and posts that ask applicants for money are
+                            removed.</span></li>
+                    <li><svg class="ic">
+                            <use href="#i-check" />
+                        </svg><span>Every job gets a match score with a short reason, so you can start with the best
+                            fits.</span></li>
+                    <li><svg class="ic">
+                            <use href="#i-sheet" />
+                        </svg><span>The full list is saved to a Google Sheet you can share.</span></li>
+                </ul>
+            </div>
+            <form class="panel" id="form" novalidate>
+                <fieldset>
+                    <legend>Search by</legend>
+                    <div class="seg"><label><input type="radio" name="mode" value="role" checked><span>Type a
+                                role</span></label><label><input type="radio" name="mode" value="cv"><span>Upload
+                                CV</span></label></div>
+                </fieldset>
+                <div class="field" id="f-role" style="margin-bottom:22px">
+                    <label for="role" class="sr">Role</label>
+                    <input type="text" id="role" maxlength="120" placeholder="For example: junior graphic designer"
+                        autocomplete="off">
+                </div>
+                <div class="field" id="f-cv" style="margin-bottom:22px" hidden>
+                    <label class="drop" id="drop"><svg class="ic">
+                            <use href="#i-up" />
+                        </svg><strong id="dname">Choose a CV or drop it here</strong><span class="muted"
+                            id="dhint">Text-based PDF or DOCX, up to 5 MB</span>
+                        <input type="file" id="cv"
+                            accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"></label>
+                </div>
+                <fieldset>
+                    <legend>Location</legend>
+                    <div class="seg"><label><input type="radio" name="loc"
+                                value="pakistan"><span>Pakistan</span></label><label><input type="radio" name="loc"
+                                value="international" checked><span>International</span></label></div>
+                </fieldset>
+                <fieldset>
+                    <legend>Job type</legend>
+                    <div class="seg"><label><input type="radio" name="jt"
+                                value="full_time"><span>Full-time</span></label><label><input type="radio" name="jt"
+                                value="remote" checked><span>Remote</span></label><label><input type="radio" name="jt"
+                                value="both"><span>Both</span></label></div>
+                </fieldset>
+                <p class="err" id="ferr" role="alert" hidden></p>
+                <button class="btn primary" type="submit">Start search</button>
+                <p class="privacy"><svg class="ic">
+                        <use href="#i-lock" />
+                    </svg><span>Your CV is read once to build a search profile. It is not saved or written to the
+                        results.</span></p>
+            </form>
+        </section>
+
+        <!-- 2. progress -->
+        <section id="v-progress" class="progress" hidden>
+            <h2 id="ptitle">Searching for jobs</h2>
+            <p class="muted" style="margin-top:6px">This usually takes under a minute.</p>
+            <ol class="stages" id="stages" aria-live="polite"></ol>
+            <p class="guard"><svg class="ic">
+                    <use href="#i-shield" />
+                </svg><span>Job posts are treated as untrusted text. Instructions hidden inside a post are
+                    ignored.</span></p>
+            <p class="err" id="perr" role="alert" hidden></p>
+            <button class="btn ghost" id="cancel" type="button">Cancel</button>
+        </section>
+
+        <!-- 3. results -->
+        <section id="v-results" class="results" hidden>
+            <div class="rhead">
+                <div>
+                    <h2 id="rtitle"></h2>
+                    <p class="profile" id="rprofile"></p>
+                </div>
+                <div class="acts"><button class="btn ghost" id="csv" type="button">Download CSV</button><a
+                        class="btn ghost" id="sheet" target="_blank" rel="noopener noreferrer"><svg class="ic">
+                            <use href="#i-sheet" />
+                        </svg>Open Google Sheet</a><button class="btn primary" id="again" type="button">New
+                        search</button></div>
+            </div>
+            <p class="sub" id="rmeta"></p>
+            <dl class="stats" id="stats"></dl>
+            <p class="note-sample" id="sample" hidden>You are seeing sample data. Set <code>USE_MOCK</code> to false and
+                add the agent address in the settings at the top of the script to see real results.</p>
+            <div class="notice" id="notice" hidden></div>
+            <div class="filters">
+                <label>Minimum match<select id="fm">
+                        <option value="0">Any</option>
+                        <option value="40">Possible or better (40+)</option>
+                        <option value="70">Strong only (70+)</option>
+                    </select></label>
+                <label>Trust<select id="ft">
+                        <option value="0">Any</option>
+                        <option value="50">Review or better (50+)</option>
+                        <option value="75">Verified only (75+)</option>
+                    </select></label>
+                <label>Search results<input type="search" id="fq" placeholder="Title or company"></label>
+                <span class="count" id="count" aria-live="polite"></span>
+            </div>
+            <div class="tablewrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">Rank</th>
+                            <th scope="col">Match</th>
+                            <th scope="col">Job</th>
+                            <th scope="col">Company</th>
+                            <th scope="col" class="hide-sm">Location/remote</th>
+                            <th scope="col" class="hide-sm">Job type</th>
+                            <th scope="col" class="hide-sm">Source</th>
+                            <th scope="col">Trust</th>
+                            <th scope="col" class="hide-sm">Posted</th>
+                            <th scope="col"><span class="sr">Apply</span></th>
+                        </tr>
+                    </thead>
+                    <tbody id="rows"></tbody>
+                </table>
+                <div class="empty" id="empty" hidden>No jobs match these filters. Lower the minimum match or clear the
+                    search box.</div>
+            </div>
+            <details class="more" id="removed" hidden>
+                <summary>Removed by the trust check (<span id="rn"></span>)</summary>
+                <ul id="rlist"></ul>
+            </details>
+            <details class="more">
+                <summary>Run details</summary>
+                <div id="rdetail"></div>
+            </details>
+        </section>
+    </main>
+
+    <div class="veil" id="veil" hidden></div>
+    <aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="dtitle" aria-hidden="true">
+    </aside>
+
+    <script>
+        /* ---- Settings: connect the agent here ---- */
+        const CONFIG = {
+            USE_MOCK: false,            // true = built-in sample data, no network
+            MODE: 'sync',              // 'sync' = one request, the answer arrives when the run ends; 'poll' = start, then check status
+            START_URL: 'https://ytdhgj.app.n8n.cloud/webhook/job-search-run',             // POST multipart form: input_type, role_text, location, job_type, data (CV file)
+            STATUS_URL: '',            // poll mode only. GET ?run_id= -> { stage: 0-4, notes: {}, done: bool, error?: string }
+            RESULTS_URL: '',           // poll mode only. GET ?run_id= -> the result object below
+            AUTH: { name: 'job_hunter', value: 'this is job hunter created by farhan khan' }, // optional header the webhook checks, e.g. { name: 'X-Api-Key', value: '...' }
+            POLL_MS: 5000,
+            STAGE_MS: 8000             // sync mode: how often the progress tracker moves on while waiting
+        };
+        /* Result object the agent returns:
+           { run_id, status: 'ok'|'no_jobs'|'partial'|'error', message, sheet_url, sheet_tab, started_at, ended_at, location, job_type,
+             profile: { roles, skills, seniority, keywords, industries, languages },
+             source_counts: { raw: {board: n}, kept: {board: n}, stale_dropped: n },
+             trust_counts: { input, rule_rejected, score_rejected, kept }, errors: [string | {source, message}],
+             jobs: [{ job_id, title, company, company_url, apply_link, source, location, remote, job_type, trust_score, trust_reason,
+                      match_score, match_reason, posted_date, description, raw_salary }],
+             rejected: [{ title, company, stage: 'rules'|'trust_score', trust_score?, reason }] } */
+        const STAGES = ['Reading your profile', 'Searching job boards', 'Checking trust', 'Scoring the match', 'Saving results'];
+        const TYPES = { full_time: 'Full-time', part_time: 'Part-time', contract: 'Contract', internship: 'Internship', freelance: 'Freelance', not_stated: 'Not stated', unknown: 'Not stated' };
+        const $ = (s, r = document) => r.querySelector(s);
+        const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+        const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+        const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const safeUrl = (u) => (/^https?:\/\//i.test(u || '') ? u : '#');
+        const icon = (n) => '<svg class="ic" aria-hidden="true"><use href="#i-' + n + '"/></svg>';
+        const num = (v) => Number(v) || 0;
+        const cap = (s) => (s ? String(s).charAt(0).toUpperCase() + String(s).slice(1) : '-');
+        const typeLabel = (t) => TYPES[t] || String(t || 'Not stated').replace(/_/g, ' ');
+        const fmtDate = (d) => { const t = new Date(d); return isNaN(t) ? 'Not stated' : t.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); };
+        const where = (j) => { const l = String(j.location || '').trim(); return (l + (j.remote === true && !/remote/i.test(l) ? ' (remote)' : '')).trim() || 'Not stated'; };
+        let runToken = 0, stageNow = 0, jobs = [], run = {}, lastFocus = null;
+
+        /* ---- theme ---- */
+        const root = document.documentElement;
+        function setTheme(t) {
+            root.dataset.theme = t;
+            $('#theme').innerHTML = icon(t === 'dark' ? 'sun' : 'moon');
+            $('#theme').setAttribute('aria-label', 'Switch to ' + (t === 'dark' ? 'light' : 'dark') + ' theme');
+            try { localStorage.setItem('jsa-theme', t); } catch (e) { }
+        }
+        let saved = null; try { saved = localStorage.getItem('jsa-theme'); } catch (e) { }
+        setTheme(saved === 'light' ? 'light' : 'dark');
+        $('#theme').onclick = () => setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
+
+        /* ---- views ---- */
+        function show(id) { ['setup', 'progress', 'results'].forEach((v) => ($('#v-' + v).hidden = v !== id)); window.scrollTo(0, 0); }
+
+        /* ---- setup form (same fields and rules as the agent) ---- */
+        const val = (n) => $('input[name=' + n + ']:checked').value;
+        $$('input[name=mode]').forEach((r) => (r.onchange = () => { const cv = val('mode') === 'cv'; $('#f-cv').hidden = !cv; $('#f-role').hidden = cv; $('#ferr').hidden = true; }));
+        function fieldErr(m) { const e = $('#ferr'); e.textContent = m; e.hidden = false; }
+        function setFile(f) {
+            if (f && !/\.(pdf|docx)$/i.test(f.name)) return fieldErr('Only PDF or DOCX CVs are supported. Choose one of those, or switch to typing a role.');
+            if (f && f.size > 5 * 1048576) return fieldErr('The CV is larger than 5 MB. Choose a smaller file.');
+            $('#ferr').hidden = true; $('#dname').textContent = f ? f.name : 'Choose a CV or drop it here';
+            if (f) { const dt = new DataTransfer(); dt.items.add(f); $('#cv').files = dt.files; }
+        }
+        $('#cv').onchange = (e) => setFile(e.target.files[0]);
+        const drop = $('#drop');
+        ['dragenter', 'dragover'].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add('over'); }));
+        ['dragleave', 'drop'].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.remove('over'); }));
+        drop.addEventListener('drop', (e) => setFile(e.dataTransfer.files[0]));
+        $('#form').onsubmit = (e) => {
+            e.preventDefault();
+            const mode = val('mode'), role = $('#role').value.trim(), file = $('#cv').files[0];
+            if (mode === 'role' && role.length < 3) return fieldErr('Type the role you are looking for, at least 3 characters.');
+            if (mode === 'cv' && !file) return fieldErr('Upload your CV as a PDF or DOCX, or switch to typing a role.');
+            $('#ferr').hidden = true;
+            const fd = new FormData();
+            fd.append('input_type', mode); fd.append('location', val('loc')); fd.append('job_type', val('jt'));
+            if (mode === 'role') fd.append('role_text', role); else fd.append('data', file);
+            startRun(fd, mode === 'role' ? role : 'your CV');
+        };
+
+        /* ---- progress ---- */
+        function renderStages(active, notes) {
+            $('#stages').innerHTML = STAGES.map((s, i) => {
+                const c = i < active ? 'done' : i === active ? 'active' : 'pending';
+                return '<li class="' + c + '"><span class="dot">' + (c === 'done' ? icon('check') : '') + '</span><div><span class="name">' + s + '</span><span class="note">' + esc(notes[i] || '') + '</span></div></li>';
+            }).join('');
+        }
+        function notesFrom(d) {
+            const raw = (d.source_counts && d.source_counts.raw) || {}, tc = d.trust_counts || {}, n = Object.values(raw).reduce((a, b) => a + num(b), 0);
+            const rem = num(tc.rule_rejected) + num(tc.score_rejected), p = d.profile || {};
+            return [(p.roles || []).length ? 'Searching as ' + p.roles.slice(0, 2).join(', ') : '', n ? n + ' jobs collected from ' + Object.keys(raw).length + ' boards' : '',
+            tc.input != null ? num(tc.kept) + ' passed, ' + rem + ' removed' : '', (d.jobs || []).length + ' jobs scored', d.sheet_tab ? 'Saved to the tab “' + d.sheet_tab + '”' : ''];
+        }
+        async function startRun(fd, label) {
+            const my = ++runToken; stageNow = 0;
+            show('progress'); $('#perr').hidden = true; $('#cancel').textContent = 'Cancel';
+            $('#ptitle').textContent = 'Searching for ' + label; renderStages(0, {});
+            try {
+                const data = CONFIG.USE_MOCK ? await mockRun(my) : await realRun(fd, my);
+                if (my !== runToken) return;
+                renderStages(5, notesFrom(data)); await sleep(500);
+                showResults(data, label);
+            } catch (err) {
+                if (my !== runToken) return;
+                const e = $('#perr');
+                e.textContent = err instanceof TypeError ? 'The agent could not be reached. Check your connection and the agent address in the settings, then try again.' : ((err && err.message) || 'The search stopped unexpectedly.');
+                e.hidden = false; $('#cancel').textContent = 'Back to search';
+            }
+        }
+        $('#cancel').onclick = () => { runToken++; show('setup'); };
+        async function realRun(fd, my) {
+            const headers = CONFIG.AUTH.name ? { [CONFIG.AUTH.name]: CONFIG.AUTH.value } : {};
+            const fail = (r, d) => new Error((d && (d.message || d.error)) || 'The search failed (error ' + r.status + '). Try again in a moment.');
+            if (CONFIG.MODE === 'sync') {
+                const t = setInterval(() => { if (my === runToken && stageNow < 3) renderStages(++stageNow, {}); }, CONFIG.STAGE_MS);
+                try {
+                    const r = await fetch(CONFIG.START_URL, { method: 'POST', body: fd, headers });
+                    const d = await r.json().catch(() => ({}));
+                    if (!r.ok) throw fail(r, d);
+                    return d;
+                } finally { clearInterval(t); }
+            }
+            const s = await fetch(CONFIG.START_URL, { method: 'POST', body: fd, headers });
+            if (!s.ok) throw fail(s, await s.json().catch(() => ({})));
+            const { run_id } = await s.json(), q = '?run_id=' + encodeURIComponent(run_id), notes = {};
+            for (; ;) {
+                await sleep(CONFIG.POLL_MS); if (my !== runToken) return;
+                const st = await (await fetch(CONFIG.STATUS_URL + q, { headers })).json();
+                if (st.error) throw new Error(st.error);
+                Object.assign(notes, st.notes || {}); renderStages(st.stage, notes);
+                if (st.done) break;
+            }
+            const r = await fetch(CONFIG.RESULTS_URL + q, { headers });
+            if (!r.ok) throw fail(r, await r.json().catch(() => ({})));
+            return r.json();
+        }
+
+        /* ---- results ---- */
+        const lvl = (m) => (m >= 70 ? ['s', 'Strong'] : m >= 40 ? ['p', 'Possible'] : ['w', 'Weak']);
+        function trustBadge(t, why) {
+            const ti = why ? ' title="' + esc(why) + '"' : '';
+            if (t >= 75) return '<span class="badge ok"' + ti + '>' + icon('shield') + t + ' Verified</span>';
+            if (t >= 50) return '<span class="badge warn"' + ti + '>' + icon('tri') + t + ' Review</span>';
+            return '<span class="badge bad"' + ti + '>' + icon('oct') + 'Excluded</span>';
+        }
+        const ago = (d) => { const n = Math.floor((Date.now() - new Date(d)) / 864e5); return isNaN(n) ? 'Not stated' : n < 1 ? 'Today' : n === 1 ? '1 day ago' : n + ' days ago'; };
+        const errText = (e) => (typeof e === 'string' ? e : (e && e.source ? e.source + ': ' : '') + ((e && e.message) || JSON.stringify(e)));
+        function showResults(d, label) {
+            run = d || {};
+            jobs = (Array.isArray(run.jobs) ? run.jobs : []).slice().sort((a, b) => (num(b.match_score) - num(a.match_score)) || (num(b.trust_score) - num(a.trust_score)));
+            const sc = run.source_counts || {}, raw = sc.raw || {}, tc = run.trust_counts || {}, p = run.profile || {};
+            const collected = Object.values(raw).reduce((a, b) => a + num(b), 0), removed = num(tc.rule_rejected) + num(tc.score_rejected);
+            $('#rtitle').textContent = jobs.length ? jobs.length + ' jobs ranked for ' + label : 'No matching jobs found';
+            $('#rprofile').innerHTML = (jobs.length ? '' : esc(run.message || 'Try broader keywords or a different location.') + ' ') +
+                (((p.roles || []).length || (p.keywords || []).length) ? 'Searching as ' + (p.roles || []).concat((p.keywords || []).slice(0, 5)).map((x) => '<span class="chip">' + esc(x) + '</span>').join('') +
+                    (p.seniority ? '<span class="chip">' + esc(p.seniority) + ' level</span>' : '') : '');
+            $('#rmeta').textContent = run.sheet_tab ? 'Saved to the Google Sheet tab “' + run.sheet_tab + '”.' : '';
+            const st = [['Jobs ranked', jobs.length, ''], ['Best match', jobs.length ? num(jobs[0].match_score) : 0, '/100'], ['Collected', collected || '-', Object.keys(raw).length ? ' from ' + Object.keys(raw).length + ' boards' : ''], ['Removed by trust check', removed, '']];
+            if (num(sc.stale_dropped)) st.push(['Skipped as too old', num(sc.stale_dropped), '']);
+            $('#stats').innerHTML = st.map((s) => '<div><dt>' + s[0] + '</dt><dd>' + s[1] + '<small>' + s[2] + '</small></dd></div>').join('');
+            const a = $('#sheet'); a.hidden = !run.sheet_url; a.href = safeUrl(run.sheet_url);
+            $('#sample').hidden = !CONFIG.USE_MOCK;
+            const errs = (Array.isArray(run.errors) ? run.errors : []).map(errText);
+            if (run.status === 'partial') errs.unshift('Some rows may be missing from the Google Sheet.');
+            if (run.status === 'error') errs.unshift('The results could not be saved to the Google Sheet.');
+            $('#notice').hidden = !errs.length;
+            $('#notice').innerHTML = errs.length ? '<strong>Some parts of the search had problems.</strong><ul>' + errs.map((e) => '<li>' + esc(e) + '</li>').join('') + '</ul>' : '';
+            const rej = Array.isArray(run.rejected) ? run.rejected : [];
+            $('#removed').hidden = !rej.length; $('#rn').textContent = rej.length;
+            $('#rlist').innerHTML = rej.map((r) => '<li><span><strong>' + esc(r.title || 'Untitled job') + '</strong>' + (r.company ? ' at ' + esc(r.company) : '') + '</span><span>' + trustBadge(0) + ' <span class="sub">' + (r.stage === 'rules' ? 'Rule check' : 'Trust score ' + num(r.trust_score)) + '</span></span><span class="sub">' + esc(r.reason) + '</span></li>').join('');
+            const rawRows = Object.keys(raw).map((b) => '<tr><td>' + esc(b) + '</td><td>' + num(raw[b]) + '</td><td>' + num((sc.kept || {})[b]) + '</td></tr>').join('');
+            const dur = run.started_at && run.ended_at ? Math.max(0, Math.round((new Date(run.ended_at) - new Date(run.started_at)) / 1000)) : null;
+            const STAT = { ok: 'Complete', no_jobs: 'No matching jobs', partial: 'Partly saved', error: 'Not saved' };
+            $('#rdetail').innerHTML = '<div class="rd"><div><h3>This run</h3><dl class="kv"><dt>Run ID</dt><dd>' + esc(run.run_id || '-') + '</dd><dt>Status</dt><dd>' + esc(STAT[run.status] || run.status || '-') + '</dd><dt>Location</dt><dd>' + esc(cap(run.location)) + '</dd><dt>Job type</dt><dd>' + esc({ full_time: 'Full-time', remote: 'Remote', both: 'Full-time and remote' }[run.job_type] || cap(run.job_type)) + '</dd><dt>Started</dt><dd>' + esc(run.started_at ? new Date(run.started_at).toLocaleString('en-GB') : '-') + '</dd><dt>Time taken</dt><dd>' + (dur == null ? '-' : dur + ' seconds') + '</dd></dl></div>' +
+                '<div><h3>Job boards</h3><table><thead><tr><th>Board</th><th>Collected</th><th>Kept</th></tr></thead><tbody>' + (rawRows || '<tr><td colspan="3">No data</td></tr>') + '</tbody></table></div>' +
+                '<div><h3>Trust check</h3><dl class="kv"><dt>Checked</dt><dd>' + num(tc.input) + '</dd><dt>Removed by rules</dt><dd>' + num(tc.rule_rejected) + '</dd><dt>Removed by trust score</dt><dd>' + num(tc.score_rejected) + '</dd><dt>Kept</dt><dd>' + num(tc.kept) + '</dd></dl></div></div>';
+            renderRows(); show('results');
+        }
+        function renderRows() {
+            const m = +$('#fm').value, t = +$('#ft').value, q = $('#fq').value.trim().toLowerCase();
+            const list = jobs.filter((j) => num(j.match_score) >= m && num(j.trust_score) >= t && (!q || (j.title + ' ' + j.company).toLowerCase().includes(q)));
+            $('#count').textContent = list.length + ' of ' + jobs.length + ' shown';
+            $('#empty').hidden = list.length > 0;
+            $('#rows').innerHTML = list.map((j) => {
+                const ms = num(j.match_score), [c, name] = lvl(ms), i = jobs.indexOf(j);
+                return '<tr><td class="rank sub">' + (i + 1) + '</td><td><div class="match"><b>' + ms + '</b><span class="bar ' + c + '"><i style="width:' + Math.min(100, ms) + '%"></i></span><span class="lvl">' + name + '</span></div></td>' +
+                    '<td><button class="rowbtn" data-i="' + i + '"><span class="jt">' + esc(j.title) + '</span><span class="sub clamp">' + esc(j.match_reason) + '</span></button></td>' +
+                    '<td>' + esc(j.company || 'Not stated') + '</td>' +
+                    '<td class="hide-sm">' + esc(where(j)) + '</td><td class="hide-sm">' + esc(typeLabel(j.job_type)) + '</td><td class="hide-sm">' + esc(j.source) + '</td>' +
+                    '<td>' + trustBadge(num(j.trust_score), j.trust_reason) + '</td><td class="hide-sm sub" title="' + esc(j.posted_date) + '">' + ago(j.posted_date) + '</td>' +
+                    '<td><a class="btn primary" style="padding:7px 14px" href="' + esc(safeUrl(j.apply_link)) + '" target="_blank" rel="noopener noreferrer">Apply' + icon('ext') + '<span class="sr"> to ' + esc(j.title) + '</span></a></td></tr>';
+            }).join('');
+        }
+        ['fm', 'ft'].forEach((id) => ($('#' + id).onchange = renderRows)); $('#fq').oninput = renderRows;
+        $('#rows').onclick = (e) => { const b = e.target.closest('.rowbtn'); if (b) openDrawer(jobs[+b.dataset.i], b, +b.dataset.i + 1); };
+        $('#again').onclick = () => show('setup');
+
+        /* ---- CSV: the same 12 columns as the Google Sheet, plus the extra fields ---- */
+        $('#csv').onclick = () => {
+            const head = ['Rank', 'Job title', 'Company', 'Apply link', 'Source', 'Location/remote', 'Job type', 'Trust score', 'Trust reason', 'Match score', 'Match reason', 'Posted date + short description', 'Salary', 'Company website', 'Full description'];
+            const safe = (v) => { const s = String(v == null ? '' : v).replace(/[\x00-\x1f]+/g, ' ').trim(); return /^[=+\-@]/.test(s) ? "'" + s : s; };
+            const cell = (v) => '"' + safe(v).replace(/"/g, '""') + '"';
+            const rows = jobs.map((j, i) => [i + 1, j.title, j.company, j.apply_link, j.source, where(j), j.job_type, num(j.trust_score), j.trust_reason, num(j.match_score), j.match_reason, safe(j.posted_date) + ' | ' + safe(j.description).slice(0, 200), j.raw_salary, j.company_url, j.description]);
+            const csv = '\ufeff' + [head].concat(rows).map((r) => r.map(cell).join(',')).join('\r\n');
+            const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+            a.download = (run.sheet_tab || 'job-search-results').replace(/[^\w\- ]+/g, '') + '.csv'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+        };
+
+        /* ---- detail drawer ---- */
+        function openDrawer(j, from, rank) {
+            lastFocus = from; const ms = num(j.match_score), name = lvl(ms)[1].toLowerCase();
+            $('#drawer').innerHTML = '<button class="iconbtn x" id="dx" aria-label="Close details">' + icon('x') + '</button>' +
+                '<h2 id="dtitle">' + esc(j.title) + '</h2><p class="sub">' + esc(j.company || 'Company not stated') + '</p>' +
+                (j.raw_salary ? '<p style="margin-top:10px"><strong>' + esc(j.raw_salary) + '</strong></p>' : '') +
+                '<dl class="kv"><dt>Rank</dt><dd>' + rank + ' of ' + jobs.length + '</dd><dt>Location</dt><dd>' + esc(where(j)) + '</dd><dt>Job type</dt><dd>' + esc(typeLabel(j.job_type)) + '</dd><dt>Source</dt><dd>' + esc(j.source) + '</dd><dt>Posted</dt><dd>' + esc(fmtDate(j.posted_date)) + '</dd>' +
+                (/^https?:\/\//i.test(j.company_url || '') ? '<dt>Company site</dt><dd><a href="' + esc(j.company_url) + '" target="_blank" rel="noopener noreferrer" style="color:var(--brand)">' + esc(j.company_url) + '</a></dd>' : '') + '</dl>' +
+                '<section class="ai"><h3>Why it fits (' + ms + '/100, ' + name + ')</h3><p>' + esc(j.match_reason || 'No reason was returned.') + '</p></section>' +
+                '<section class="tr"><h3>Trust check ' + trustBadge(num(j.trust_score)) + '</h3><p>' + esc(j.trust_reason || 'No reason was returned.') + '</p></section>' +
+                '<section><h3>Description</h3><p class="desc">' + esc(j.description || 'No description was provided.') + '</p></section>' +
+                '<a class="btn primary go" href="' + esc(safeUrl(j.apply_link)) + '" target="_blank" rel="noopener noreferrer">Apply on ' + esc(j.source) + icon('ext') + '</a>';
+            $('#veil').hidden = false; $('#drawer').classList.add('open'); $('#drawer').setAttribute('aria-hidden', 'false'); $('#dx').focus();
+            $('#dx').onclick = closeDrawer;
+        }
+        function closeDrawer() { $('#drawer').classList.remove('open'); $('#drawer').setAttribute('aria-hidden', 'true'); $('#veil').hidden = true; if (lastFocus) lastFocus.focus(); }
+        $('#veil').onclick = closeDrawer;
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && $('#drawer').classList.contains('open')) closeDrawer(); });
+
+        /* ---- sample data (used while USE_MOCK is true) ---- */
+        const day = (n) => new Date(Date.now() - n * 864e5).toISOString();
+        async function mockRun(my) {
+            for (let i = 0; i < 5; i++) { stageNow = i; renderStages(i, {}); await sleep(1000); if (my !== runToken) return; }
+            const J = (n, title, company, location, source, jt, posted, ms, mr, ts, tr, sal, site) => ({ job_id: 'sample_' + n, title, company, company_url: site || '', location, remote: true, source, job_type: jt, posted_date: day(posted), match_score: ms, match_reason: mr, trust_score: ts, trust_reason: tr, raw_salary: sal, apply_link: 'https://example.com/jobs/' + n, description: 'Sample description for ' + title + ' at ' + company + '. Build and maintain services, work with a small remote team and ship weekly. Requirements and benefits would appear here exactly as the job post states them.' });
+            const start = new Date(Date.now() - 41000).toISOString();
+            return {
+                run_id: 'run-20261112-141300', status: 'ok', message: '8 ranked jobs written to the sheet.', sheet_url: '', sheet_tab: 'python developer - 12 Nov 1413', started_at: start, ended_at: new Date().toISOString(), location: 'international', job_type: 'remote',
+                profile: { roles: ['Python developer'], skills: ['Python', 'Django', 'REST APIs'], seniority: 'mid', keywords: ['Django', 'REST APIs', 'PostgreSQL', 'Docker'], industries: [], languages: [] },
+                source_counts: { raw: { RemoteOK: 99, Remotive: 13, Arbeitnow: 150 }, kept: { RemoteOK: 4, Remotive: 4 }, stale_dropped: 29 },
+                trust_counts: { input: 11, rule_rejected: 2, score_rejected: 1, kept: 8 }, errors: ['Arbeitnow: the request timed out (sample warning)'],
+                rejected: [
+                    { title: 'Remote Data Entry Clerk', company: 'QuickHire Global', stage: 'rules', reason: 'Asks for payment or fee ("registration fee")' },
+                    { title: 'Senior Python Developer', company: '', stage: 'rules', reason: 'Posting contains instructions aimed at the AI scorer (prompt injection)' },
+                    { title: 'Software Engineer', company: 'Nexa Staffing', stage: 'trust_score', trust_score: 31, reason: 'Vague description and chat-app contact only.' }],
+                jobs: [
+                    J(1, 'Python Backend Developer', 'Northwind Labs', 'Worldwide', 'Remotive', 'full_time', 2, 88, 'Python, Django and REST APIs match your profile closely.', 92, 'Known company domain, salary stated, no payment requests.', '$90,000 - $120,000 per year', 'https://northwind.example'),
+                    J(2, 'Full-Stack Developer', 'Kestrel Data', 'Worldwide', 'Remotive', 'contract', 5, 78, 'Strong Python and API overlap, some front-end work expected.', 86, 'Trusted source and a company page that matches the posting.', ''),
+                    J(3, 'Data Engineer', 'Brightpath', 'Remote', 'RemoteOK', 'full_time', 9, 71, 'Python and SQL fit. Spark experience is not in your profile.', 80, 'Established company, clear requirements.', '$100,000 - $130,000 per year'),
+                    J(4, 'API Developer', 'Tidewater', 'Asia', 'RemoteOK', 'contract', 12, 66, 'REST and PostgreSQL match. The role leans toward Node.js.', 78, 'Specific tasks and a named hiring team.', '10,000 - 30,000 (currency not stated)'),
+                    J(5, 'Software Engineer', 'Orbit Health', 'Remote', 'RemoteOK', 'not_stated', 3, 58, 'General engineering role with partial Python use.', 74, 'Company is real but the posting has few details. Rule flags: very short description.', ''),
+                    J(6, 'Junior Developer', 'Lumen Works', 'Worldwide', 'Remotive', 'full_time', 20, 49, 'Entry level, below the seniority in your profile.', 82, 'Clear salary band and interview steps.', '$40,000 - $55,000 per year'),
+                    J(7, 'QA Automation Engineer', 'Fieldnote', 'Remote', 'RemoteOK', 'full_time', 7, 36, 'Uses Python, but the work is testing, not development.', 62, 'Vague description and no company link. Rule flags: free email contact.', ''),
+                    J(8, 'Technical Support Lead', 'Parcel', 'Remote', 'RemoteOK', 'not_stated', 15, 32, 'Support work with little coding.', 61, 'Contact is a free email address. Review carefully.', '')
+                ]
+            };
+        }
+    </script>
+</body>
+
+</html>
